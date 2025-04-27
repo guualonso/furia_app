@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:furia_app/features/home/home_screen.dart';
 import 'package:furia_app/features/matches/matches_screen.dart';
 import 'package:furia_app/features/statistics/statistics_screen.dart';
+import 'package:furia_app/features/auth/login_screen.dart';
 
 final router = GoRouter(
   initialLocation: '/home',
@@ -22,6 +23,11 @@ final router = GoRouter(
           builder: (context, state) => const MatchesScreen(),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => const LoginScreen(),
     ),
   ],
 );

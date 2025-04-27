@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:furia_app/app/router.dart'; // Este import é necessário para acessar a variável 'router'
+import 'package:furia_app/app/router.dart';
 
 class FuriaApp extends StatelessWidget {
   const FuriaApp({super.key});
@@ -9,20 +9,24 @@ class FuriaApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'FURIA Esports',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        // Adicionando mais personalizações de tema
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
         appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
           elevation: 0,
           centerTitle: true,
           titleTextStyle: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Colors.white),
+        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
       ),
-      routerConfig: router, // Variável 'router' vem do import do router.dart
+      routerConfig: router,
     );
   }
 }
