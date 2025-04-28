@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'app/app.dart';
+import 'package:furia_app/app/router.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,3 +23,15 @@ void main() async {
   runApp(const FuriaApp());
 }
 
+class FuriaApp extends StatelessWidget {
+  const FuriaApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      title: 'FURIA App',
+      debugShowCheckedModeBanner: false,
+      routerConfig: router, 
+    );
+  }
+}
