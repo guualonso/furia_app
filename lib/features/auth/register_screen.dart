@@ -31,6 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
+        await FirebaseAuth.instance.currentUser?.updateDisplayName(_nameController.text.trim());
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Conta criada com sucesso!')),
         );

@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text,
         );
         if (!mounted) return;
-        context.goNamed('dashboard');
+        context.goNamed('home');
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ao fazer login: ${e.message}')),
