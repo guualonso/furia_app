@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:furia_app/core/services/home_match_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -98,86 +99,145 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildMatchSection(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF121212),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFD9D9D9), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Próximas Partidas',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: HomeMatchService.getAllFuriaMatches(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Erro: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text('Nenhuma partida encontrada.');
+        }
+        final matches = snapshot.data!;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Partidas Finalizadas da FURIA',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          _buildMatchCard(),
-          const SizedBox(height: 16),
-          _buildMatchCard(),
-        ],
-      ),
+            const SizedBox(height: 16),
+            ...matches.take(5).map((match) => _buildMatchCard(match)),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildMatchCard() {
+  Widget _buildMatchCard(Map<String, dynamic> match) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[850],
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'FURIA vs Team Liquid',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'BLAST Premier: Fall Final 2023',
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '10 de Abril - 19:00',
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+          Text(
+            '${match['team1']} vs ${match['team2']}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
           ),
-          Image.asset('assets/images/logo-furia.png', width: 60, height: 60),
-          const SizedBox(width: 16),
-          Image.network('https://placehold.co/60x60', width: 60, height: 60),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildTeamLogo(
+                match['game'], 
+                match['team1_id'], 
+                match['team1_slug']
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.sports_esports, color: Colors.white),
+              const SizedBox(width: 8),
+              _buildTeamLogo(
+                match['game'], 
+                match['team2_id'], 
+                match['team2_slug']
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            match['tournament'],
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            match['date'],
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Placar: ${match['score']}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          _buildGameLogo(match['game'], match['game_logo']),
         ],
       ),
+    );
+  }
+
+  Widget _buildTeamLogo(String game, String teamId, String teamSlug) {
+    final safeGame = game.replaceAll(' ', '_'); // evita espaços
+    final logoPath = 'teams_logos/${safeGame}_${teamId}_$teamSlug.png';
+    return Image.asset(
+      logoPath,
+      width: 64,
+      height: 64,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, _) =>
+          const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+    );
+  }
+
+  Widget _buildGameLogo(String gameName, String? logoUrl) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        logoUrl != null && logoUrl.isNotEmpty
+            ? Image.network(
+                logoUrl,
+                width: 24,
+                height: 24,
+                errorBuilder: (context, error, _) =>
+                    const Icon(Icons.videogame_asset, size: 24, color: Colors.grey),
+              )
+            : const Icon(Icons.videogame_asset, size: 24, color: Colors.grey),
+        const SizedBox(width: 6),
+        Text(
+          gameName,
+          style: TextStyle(
+            color: Colors.grey[300],
+            fontSize: 13,
+          ),
+        ),
+      ],
     );
   }
 }

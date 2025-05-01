@@ -35,4 +35,5 @@ flutter:
     # - assets/icons/
     - assets/images/logo-furia.png
     - assets/images/logo-google.png
+    - assets/teams_logos/
     
