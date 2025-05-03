@@ -140,4 +140,4 @@ Contribuições são bem-vindas! Crie uma issue ou um pull request.
 
 ## 👤 Autor
 
-Gustavo — @guualonso
+**Gustavo** — [@guualonso](https://github.com/guualonso)
