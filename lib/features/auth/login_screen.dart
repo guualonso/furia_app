@@ -14,7 +14,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _passwordFocus = FocusNode();
   bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _passwordFocus.dispose();
+    super.dispose();
+  }
 
   Future<void> _login() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -84,12 +91,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _emailController,
                     hintText: 'email@dominio.com',
                     keyboardType: TextInputType.emailAddress,
+                    onSubmitted: () => _passwordFocus.requestFocus(),
                   ),
                   const SizedBox(height: 16),
                   _buildTextField(
                     controller: _passwordController,
                     hintText: 'Senha',
                     obscureText: true,
+                    focusNode: _passwordFocus,
+                    onSubmitted: _login,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
@@ -162,11 +172,16 @@ class _LoginScreenState extends State<LoginScreen> {
     required String hintText,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
+    FocusNode? focusNode,
+    VoidCallback? onSubmitted,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      focusNode: focusNode,
+      textInputAction: onSubmitted != null ? TextInputAction.next : TextInputAction.done,
+      onFieldSubmitted: (_) => onSubmitted?.call(),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(

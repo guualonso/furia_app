@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:furia_app/features/home/home_screen.dart';
+import 'package:furia_app/core/widgets/home_screen_selector.dart'; 
 import 'package:furia_app/features/matches/matches_screen.dart';
 import 'package:furia_app/features/statistics/statistics_screen.dart';
 import 'package:furia_app/features/auth/login_screen.dart';
@@ -25,7 +25,7 @@ final router = GoRouter(
     GoRoute(
       path: '/home',
       name: 'home',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const HomeScreenSelector(),
       routes: [
         GoRoute(
           path: 'statistics',

@@ -12,7 +12,7 @@ class HomeMatchService {
   static Future<List<Map<String, dynamic>>> getAllFuriaMatches() async {
     final String token = dotenv.env['PANDASCORE_API_KEY']!;
     final List<Map<String, dynamic>> allMatches = [];
-    final Set<int> seenMatchIds = {}; // evita duplicatas
+    final Set<int> seenMatchIds = {}; 
 
     for (final teamId in furiaTeamIds) {
       final url =
