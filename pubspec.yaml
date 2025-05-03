@@ -25,6 +25,8 @@ dependencies:
   google_sign_in: ^6.3.0
   mask_text_input_formatter: ^2.9.0
   percent_indicator: ^4.2.2
+  flutter_multi_formatter: ^2.13.7
+
 
 dev_dependencies:
   flutter_test:

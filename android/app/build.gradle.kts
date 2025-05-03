@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.furia_app"
+    namespace = "com.gualonso.furiaapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
